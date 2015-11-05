@@ -1,6 +1,6 @@
 %% main: lab measurments OFFGRID. CST.
 function analytics()
-	addpath('../')
+	addpath('../lib')
 	fig = 0;
 
 	%-------------------------- OFFGRID -------------------------
@@ -34,10 +34,10 @@ function analytics()
 	thd_f = total_harmonic_distortion(V_f);
 	disp(['Total Harmonic Distortion: ' num2str(20 * log10(thd_f)) ' dBc'])
 	disp(['Total Harmonic Distortion: ' num2str((100 * thd_f)) ' %'])
-	disp(['Total Harmonic Distortion: ' num2st(rthd(s, Fs, 1000)) ' dBc'])
+	disp(['Total Harmonic Distortion: ' num2str(thd(s, Fs, 1000)) ' dBc'])
 
 	saveas(fig, '../fig/log_6_freq_spec.png', 'png')
-	saveas(fig, '../fig/log_6_freq_spec.eps', 'epsc')
+	% saveas(fig, '../fig/log_6_freq_spec.eps', 'epsc')
 
 	V_f_offgrid = V_f;
 	f_offgrid = f;
@@ -76,11 +76,10 @@ function analytics()
 	disp(['Total Harmonic Distortion: ' num2str(thd(s, Fs, 1000)) ' dBc'])
 
 	saveas(fig, '../fig/log_4_freq_spec.png', 'png')
-	saveas(fig, '../fig/log_4_freq_spec.eps', 'epsc')
+	% saveas(fig, '../fig/log_4_freq_spec.eps', 'epsc')
 
 
 	%------------------- Plot both ------------------------
-
 	V_f_offgrid = 20* log10(V_f_offgrid ./ max(V_f_offgrid));
 	V_f = 20* log10(V_f ./ max(V_f));
 
@@ -97,3 +96,5 @@ function analytics()
 	ylabel('Relative amplitude [dB]')
 	legend('Ongrid', 'Offgrid')
 	hold off
+
+	saveas(fig, '../fig/freq_spec_log_4_6.png', 'png')
