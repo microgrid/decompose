@@ -1,10 +1,10 @@
 %% big_data_analysis: function description
 function big_data_analysis(arg)
-	addpath('../')
+	addpath('../lib')
 	fig = 0;
-	t = 1444294922616993;
-	% t = 1444043021895000;
-	raw = fileread(['../raw/' num2str(t) '.txt']);
+	date_time = 1444294922616993;
+	% date_time = 1444043021895000;
+	raw = fileread(['../raw/' num2str(date_time) '.txt']);
 
 	raw = strsplit(raw, '\n');
 	tmp = [];
@@ -13,7 +13,7 @@ function big_data_analysis(arg)
 	proc.current = [];
 
 	i = 0;
-	for x = raw
+	for x = raw(150:end)
 		tmp = char(x);
 		tmp = strrep(tmp, '\n', '');
 		tmp = str2num(tmp);
@@ -37,16 +37,20 @@ function big_data_analysis(arg)
 	clf(fig)
 	hold on
 
-	r = 1500:1500+5*20;
+	r = 1500:1500+2*20;
 
-	proc.current(r) = proc.current(r) ./ abs(min(proc.current(r)));
+	proc.current(r) = proc.current(r) ./ (max(proc.current(r)));
 	proc.voltage(r) = proc.voltage(r) ./ max(proc.voltage(r));
 
-	plot(proc.t(r), proc.voltage(r), 'r')
-	plot(proc.t(r), proc.current(r), 'b')
+	plot(proc.t(r), proc.voltage(r), 'k')
+	plot(proc.t(r), proc.current(r), 'k--')
+	power = proc.voltage(r) .* proc.current(r);
+	% power = power - mean(power);
+	plot(proc.t(r), power, 'b')
+
 	plot(proc.t(r), zeros(1, length(proc.t(r))), 'k')
 
-	legend('Voltage', 'Current')
+	legend('Voltage', 'Current', 'Power')
 	title('Voltage and current measurments on offgrid')
 	xlabel('time [\mus]')
 	ylabel('Normalized amplitude')
@@ -54,3 +58,7 @@ function big_data_analysis(arg)
 	axis([proc.t(r(1)) proc.t(r(end)) -1.1 1.1])
 	saveas(fig, '../fig/volt_current_together.png', 'png')
 	hold off
+
+	disp(epoch_to_date(date_time));
+	phs = detect_phase_shift(proc);
+	disp(['Phase shift: ' num2str(100 * phs) ' %']);
